@@ -32,8 +32,6 @@ fn print_nested_value(value: impl std::fmt::Display, color: &str, use_colors: bo
     println!("    {}", colored(value, color, use_colors,),);
 }
 
-
-
 fn yes_no(value: bool) -> &'static str {
     if value { "yes" } else { "no" }
 }
@@ -180,11 +178,7 @@ pub fn print_delete_summary(summary: &DeleteSummary, use_colors: bool) {
             use_colors,
         ),
         colored("Deleted space", COLOR_MUTED, use_colors),
-        colored(
-            human_size(summary.deleted_space),
-            COLOR_SIZE,
-            use_colors,
-        ),
+        colored(human_size(summary.deleted_space), COLOR_SIZE, use_colors,),
     );
 
     println!("{}", colored("─".repeat(64), COLOR_LINE, use_colors,),);
@@ -364,7 +358,6 @@ pub fn human_size(bytes: u64) -> String {
 pub fn print_section(title: &str, use_colors: bool) {
     println!("{}", colored(title, COLOR_HEADING, use_colors,),);
 }
-
 
 pub fn print_quarantine_safety_stop(action: &str, summary: &QuarantineSummary, use_colors: bool) {
     eprintln!("{}", colored("Safety stop", COLOR_ERROR, use_colors,),);

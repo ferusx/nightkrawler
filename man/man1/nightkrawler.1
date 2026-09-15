@@ -1,0 +1,637 @@
+.\" SPDX-License-Identifier: BSD-3-Clause
+.TH NIGHTKRAWLER 1 "SEPTEMBER 2026" "Nightkrawler" "User Commands"
+
+.SH NAME
+Nightkrawler \- a filesystem duplicate finder and removal tool for UNIX-like systems
+
+.SH SYNOPSIS
+.nf
+\fBnk PATH \-\-min\-size SIZE [options]
+nightkrawler PATH \-\-min-size SIZE [options]
+
+nk {\-u | \-\-restore} PATH
+nightkrawler {\-u | \-\-restore} PATH
+
+nk {\-c | \-\-cleanup} PATH
+nightkrawler {\-c | \-\-cleanup} PATH
+
+nk {\-h | \-\-help | \-v | \-\-version | \-\-manual | \-\-classification-help}
+nightkrawler {\-h | \-\-help | \-v | \-\-version | \-\-manual | \-\-classification-help}\fP
+.fi
+.SH DESCRIPTION
+.SS "Overview"
+
+.TP
+\fBNightkrawler\fP is a duplicate file finder and removal tool designed for cautious inspection of filesystem trees and controlled handling of duplicate files. It scans regular files, identifies files with identical contents, groups matching files together, selects one file from each group to keep, and treats the remaining copies as removable duplicates.
+
+.TP
+By default, \fBNightkrawler\fP operates in report-only mode. \fBIt does not remove, move, or otherwise modify duplicate files unless an explicit action mode is selected.\fP Removable duplicates may be copied to a quarantine directory, moved to the system Trash, or permanently deleted.
+
+.SS "Scanning and Duplicate Detection"
+.TP
+Scans may operate on a single directory or recursively descend through a directory tree. A minimum file size is required for scan operations, allowing small files to be ignored before duplicate comparison begins. Paths may be excluded entirely from scanning, and dot-directories are skipped during recursive scans unless explicitly included.
+
+.TP
+\fBNightkrawler does not follow symbolic links.\fP Duplicate detection is based on file contents rather than filenames, so files with different names may belong to the same duplicate group when their contents are identical.
+
+.SS "Keeper Selection"
+.TP
+Each duplicate group has one keeper. \fBNightkrawler\fP uses deterministic keeper selection so that repeated scans make predictable choices. The default policy prefers \fBordinary\fP locations over several paths commonly associated with temporary or replaceable content. The user may also give explicit priority to selected directory trees or request that files associated with the highest version-like pathname be preferred.
+
+.SS "Classification and Protection"
+.TP
+Duplicate paths are classified as \fBordinary\fP, \fBgenerated\fP, or \fBprotected\fP. \fBGenerated\fP paths include common build, cache, and dependency directories. \fBProtected\fP paths remain visible to scans and reports, but action modes are refused when removable candidates occur beneath protected roots unless the user explicitly permits \fBprotected\fP actions.
+
+.TP
+\fBNightkrawler\fP supplies several \fBprotected\fP roots automatically and allows additional \fBprotected\fP directory trees to be specified for an individual command. Protection is distinct from exclusion: an excluded path is not scanned, while a \fBprotected\fP path may still be inspected and reported.
+
+.SS "Action and Safety"
+.TP
+Quarantine provides a recoverable workflow by copying removable duplicates to a separate directory while leaving the originals in place. \fBNightkrawler checks available space before quarantine copying begins\fP and records copied files in a quarantine manifest. Quarantined files can later be restored to their original locations.
+
+.TP
+Quarantine may also be combined with Trash or permanent deletion. In such a workflow, the quarantine copy stage is completed first. If the intended quarantine copies do not complete successfully, \fBNightkrawler refuses the subsequent destructive action and leaves the original files unchanged.\fP
+
+.TP
+Trash and permanent deletion may also be performed interactively, allowing each removable duplicate to be accepted or skipped individually.
+
+.SS "Restore, Cleanup, and Reports"
+.TP
+\fBA Nightkrawler quarantine may be restored later.\fP Existing files at original destinations are not overwritten during restoration. When a quarantine is no longer needed, the \fB\-\-cleanup\fP option can be used to remove it after \fBNightkrawler\fP has verified that it is a recognized \fBNightkrawler\fP quarantine and that the target is not one of several dangerous filesystem locations.
+
+.TP
+When duplicate groups are found, \fBNightkrawler\fP can produce a detailed text report describing the scan, duplicate groups, keeper and removable paths, classification, reclaimable space, action mode, and relevant host and scan metadata.
+
+.SH WARNING
+\fBNightkrawler can permanently remove files when used with destructive action modes. Incorrect option combinations, unsuitable keeper preferences, overly broad scan paths, or deliberate overrides of \fBprotected-path\fP safeguards may result in unintended data loss\fP.
+
+Before using \fB\-\-delete\fP, users should review the reported duplicate groups and keeper selections carefully. When possible, use \fB\-\-quarantine\fP first \fBso that recoverable copies are created before original files are removed\fP.
+
+The \fB\-\-allow\-protected\fP option explicitly disables \fBNightkrawler's\fP normal action restriction for protected candidates. Use it only when modifying files beneath protected paths is intentional and understood.
+
+\fBNightkrawler\fP attempts to reduce risk through duplicate verification, keeper selection, protected-path checks, quarantine safeguards, and interactive confirmation. These safeguards cannot protect against every incorrect command, unsuitable path selection, filesystem failure, or user decision. \fBThe user remains responsible for verifying that the selected operation is appropriate before allowing destructive actions to proceed\fP.
+
+.SH OPTIONS
+.SS "Meta Options"
+
+.TP
+.BR \-h ", " \-\-help
+Display a compact command reference containing usage syntax, available options, safety information, and examples, then exit.
+
+.TP
+.BR \-v ", " \-\-version
+Display the installed Nightkrawler version and exit.
+
+.TP
+.BR \-\-manual
+Display Nightkrawler's extensive built-in manual and exit.
+
+.TP
+.BR \-\-classification\-help
+Display focused information about \fBNightkrawler's ordinary\fP, \fBgenerated\fP, and \fBprotected\fP path classifications, then exit.
+
+.TP
+.BR \-\-no\-color ", " \-\-no-colour ", " \-\-no-colors ", " \-\-no\-colours
+Disable colored terminal output.
+
+.SS "Options"
+.TP
+.BR \-\-allow\-protected
+Permit action modes to operate on removable duplicate candidates located beneath \fBprotected paths\fP. Without this option, \fBNightkrawler stops before performing an action when a protected removable candidate is present\fP. This option does not disable \fBprotected-path\fP classification; \fBit explicitly overrides the action restriction for the current command.\fP
+
+.TP
+.BR \-c ", " "\-\-cleanup PATH"
+Remove a recognized \fBNightkrawler quarantine directory\fP after it is no longer needed. \fBNightkrawler\fP first verifies that the target contains a valid \fBNightkrawler quarantine manifest\fP. For safety, cleanup refuses the filesystem root, the user's home directory, and the current working directory. A missing or empty quarantine is treated as having nothing to clean.
+
+.TP
+.BR \-d ", " \-\-delete
+Permanently delete removable duplicate files from their original locations. One verified duplicate from each group is kept; only the remaining removable candidates are deleted. This option may be combined with \fB\-\-interactive\fP to request confirmation before each deletion, and with \fB\-\-quarantine\fP to create recoverable copies before the originals are removed.
+
+.TP
+.BR \-E ", " "\-\-exclude  PATH"
+Exclude one or more paths from scanning. Excluded paths and all descendants beneath them are ignored entirely and cannot become members of duplicate groups. Multiple paths may be supplied after the option.
+
+.TP
+.BR \-\-force\-dotdirs
+Include dot-directories during recursive scans. Without this option, directories whose names begin with a dot are skipped when \fBNightkrawler\fP descends recursively through the scan tree.
+
+.TP
+.BR \-i ", " \-\-interactive
+Ask for confirmation before each Trash or permanent deletion action. Each removable duplicate is presented individually and \fBis acted upon only when the user confirms\fP. This option applies to \fB\-\-trash\fP and \fB\-\-delete\fP; it does not make quarantine copying interactive.
+
+.TP
+.BR \-\-keep\-highest\-version
+Prefer keeping the duplicate associated with the \fBhighest version-like pathname component\fP. \fBNightkrawler\fP recognizes version-like components such as \fB1.2\fP, \fB2.0.1\fP, or \fBv3.4\fP. If no usable version is found, or if candidates remain tied, the normal \fBkeeper-selection rules\fP are used.
+
+.TP
+.BR "\-\-min\-size SIZE"
+Ignore files smaller than \fBSIZE\fP. This option is required for ordinary scan commands. \fBSIZE\fP may be specified as a byte count or with the suffixes \fBK\fP, \fBKB\fP, \fBKiB\fP, \fBM\fP, \fBMB\fP, \fBMiB\fP, \fBG\fP, \fBGB\fP, \fBGiB\fP, \fBT\fP, \fBTB\fP, or \fBTiB\fP. Suffix matching is case-insensitive and uses powers of \fB1024\fP.
+
+.TP
+.BR \-p ", " "\-\-prefer PATH"
+Give one or more directory trees explicit priority when \fBNightkrawler\fP selects the keeper for a duplicate group. Preferred paths are considered in the order supplied: the first path has the highest priority, followed by the second, and so on. This option changes only which verified duplicate is kept; it does not exclude files or make any file non-duplicate.
+
+.TP
+.BR \-P ", " "\-\-protect PATH"
+Add one or more directory trees to \fBNightkrawler's protected paths\fP for the current command. \fBProtected paths\fP are still scanned and reported, \fBbut action modes are refused if a removable duplicate candidate occurs beneath a protected path, unless \-\-allow-protected is also supplied\fP. Multiple paths may be supplied after the option.
+
+.TP
+.BR \-q ", " "\-\-quarantine PATH"
+Copy removable duplicate files into the quarantine directory specified by \fBPATH\fP. \fBThe original files remain in place unless quarantine is combined with \-\-trash or \-\-delete\fP. \fBNightkrawler\fP checks available filesystem space before copying and records successfully quarantined files in a manifest used for later restoration.
+
+.TP
+.BR \-R ", " \-\-recursive
+Recursively scan subdirectories beneath the selected scan path. Without this option, \fBNightkrawler\fP inspects only regular files directly beneath the selected directory. Dot-directories encountered during recursive scanning remain skipped unless \fB\-\-force\-dotdirs\fP is also supplied.
+
+.TP
+.BR \-r ", " "\-\-report PATH"
+Write the duplicate report to \fBPATH.\fP If \fBPATH\fP names an existing directory, \fBNightkrawler\fP creates an \fBautomatically named report\fP inside that directory. Otherwise, \fBPATH\fP is used as the report filename. A report is written when duplicate groups are found; when no duplicates are found, \fBNightkrawler\fP reports in the terminal output that there is nothing to report, and writes nothing to file.
+
+.TP
+.BR \-u ", " "\-\-restore PATH"
+Restore files recorded in the \fBNightkrawler\fP quarantine located at \fBPATH\fP to their original locations. Existing files at original destinations are not overwritten; those entries are skipped. If an original parent directory no longer exists, \fBNightkrawler\fP recreates the required directory path before restoring the file. The quarantine itself remains in place after restoration.
+
+.TP
+.BR \-t ", " \-\-trash
+Move removable duplicate files to the system Trash implementation when available. If Trash is unavailable for a required filesystem, \fBNightkrawler\fP reports an error and refuses the operation before moving duplicate files. One verified duplicate from each group is kept; only the remaining removable candidates are moved to Trash. This option may be combined with \fB\-\-interactive\fP to request confirmation before each Trash operation, and with \fB\-\-quarantine\fP to create recoverable copies before the originals are moved.
+
+.SH "DUPLICATE DETECTION"
+.TP
+\fBNightkrawler\fP identifies duplicates \fBby file contents rather than by filename\fP. Files with different names may therefore belong to the same duplicate group when their contents are identical.
+
+.TP
+Files are first grouped by size. Files whose sizes do not match another candidate require no further duplicate comparison. Files with matching sizes are hashed to identify possible duplicate groups.
+
+.TP
+\fBA matching hash is not treated as sufficient proof\fP that two files are identical. \fBNightkrawler performs a direct byte comparison\fP of matching candidates before accepting them as duplicates. This final verification prevents a hash match alone from establishing duplicate status.
+
+.TP
+\fBOnly files that pass the complete comparison process are placed into a duplicate group\fP. Each resulting group contains one file selected as the keeper and one or more identical files treated as removable candidates. Keeper selection is described in the \fBKEEPER SELECTION\fP section.
+
+.TP
+Zero-byte regular files follow the same duplicate-group model. When multiple zero-byte files are identified as duplicates, one is selected as the keeper and the remaining files become removable candidates.
+
+.SH "KEEPER SELECTION"
+.SS "Default Policy"
+.TP
+Every duplicate group contains one file selected as the keeper. The remaining files in the group are treated as removable candidates. \fBKeeper selection does not imply that the removable files differ from the keeper; all members of the group have already been verified as identical by content\fP.
+
+.TP
+By default, \fBNightkrawler\fP uses deterministic path-based ordering so that keeper selection is reproducible. Files located beneath paths commonly associated with temporary or replaceable content are given lower preference than files in ordinary locations.
+
+.TP
+Examples of less-preferred locations include \fBDownloads\fP, \fB.cache\fP, \fB.cargo\fP, \fB.gradle\fP, and \fB.local/share\fP. When candidates remain otherwise equal, \fBNightkrawler\fP compares path depth and then pathname ordering to make the final keeper selection.
+
+.SS "Preferred Paths"
+.TP
+The \fB\-\-prefer\fP option gives one or more directory trees explicit keeper priority. Preferred paths are evaluated in the order supplied. The first path has the highest priority, followed by the second, and so on.
+
+.TP
+If a duplicate candidate is located beneath a preferred path, that preference is considered before the normal keeper policy. When more than one candidate is beneath preferred paths, the candidate associated with the earliest matching preferred path is favored.
+
+.TP
+The \fB\-\-prefer\fP option affects only keeper selection. It does not alter duplicate detection, exclude files from scanning, or change the classification of any path.
+
+.SS "Highest Version"
+.TP
+The \fB\-\-keep\-highest\-version\fP option changes the keeper policy so that \fBNightkrawler prefers candidates associated with the highest detected version-like pathname component\fP.
+
+.TP
+Version-like components consist of dot-separated numeric values such as \fB1.2\fP, \fB2.0.1\fP, or \fBv3.4\fP. When suitable version components are found, \fBNightkrawler prefers the candidate associated with the numerically highest version\fP. If no usable version is found, or if version comparison does not resolve the choice, the normal deterministic keeper rules are used.
+
+.TP
+Explicit \fB\-\-prefer\fP paths take priority before the highest-version policy is applied.
+
+.SH "CLASSIFICATION"
+.TP
+\fBNightkrawler\fP classifies duplicate paths as \fBordinary\fP, \fBgenerated\fP, or \fBprotected\fP. Classification describes the context in which a duplicate was found and is used to organize reports and apply additional safety rules. Classification does not by itself determine whether two files are duplicates; duplicate status is established independently by content comparison.
+
+.SS "Ordinary"
+.TP
+A path is classified as \fBordinary\fP when it does not fall beneath a \fBprotected\fP root and does not contain one of \fBNightkrawler's\fP recognized \fBgenerated-directory\fP names.
+
+.TP
+\fBOrdinary\fP classification carries no additional action restriction beyond the normal rules of the selected command.
+
+.SS "Generated"
+.TP
+A path is classified as \fBgenerated\fP when one of its pathname components matches a recognized \fBgenerated-directory\fP name.
+
+.TP
+Recognized \fBgenerated-directory\fP names are:
+
+.nf
+\fBtarget
+build
+dist
+.cache
+__pycache__
+node_modules
+.gradle\fP
+.fi
+
+.TP
+\fBGenerated\fP classification is informational. It does not automatically exclude the path from scanning and \fBdoes not by itself authorize or perform any action\fP. The classification is intended to distinguish files beneath commonly \fBgenerated\fP, cached, dependency, or build-related directory trees from \fBordinary\fP files.
+
+.SS "Protected"
+.TP
+A path is classified as protected when it is located beneath one of \fBNightkrawler's\fP built-in protected roots or beneath a path supplied with \fB\-\-protect\fP.
+
+.TP
+Built-in protected roots include:
+
+.nf
+\fB/boot
+/etc
+/root\fP
+.fi
+
+.TP
+When \fBHOME\fP is available, \fBNightkrawler\fP also protects: \fB~/.ssh\fP, \fB~/.gnupg\fP, and \fB~/.config\fP
+
+.TP
+On \fBFreeBSD\fP, \fB/usr/local/etc\fP is also protected by default.
+
+.TP
+On \fBNetBSD\fP, \fB/usr/pkg/etc\fP is also protected by default.
+
+.TP
+Protected paths remain visible to scanning and reporting. They are not excluded merely because they are protected.
+
+.TP
+When an action mode would operate on a removable duplicate beneath a protected root, \fBNightkrawler refuses the action unless \-\-allow-protected is supplied\fP. Protection therefore acts as an \fBadditional action safeguard\fP rather than as a scan filter.
+
+.TP
+Duplicate groups are classified according to the most restrictive classification represented by their members. If any file in a duplicate group is \fBprotected\fP, the group is reported as \fBprotected\fP. If no member is \fBprotected\fP but at least one member is \fBgenerated\fP, the group is reported as \fBgenerated\fP. Otherwise, the group is reported as \fBordinary\fP.
+
+.SH "PROTECTION"
+.SS "Protection and Exclusion"
+.TP
+Protection is separate from exclusion. An excluded path is omitted from the scan and cannot participate in duplicate detection. A protected path remains eligible for scanning, classification, and reporting, but additional safety rules apply before an action mode is allowed to operate on removable candidates beneath that path.
+
+.TP
+This distinction allows \fBNightkrawler to report duplicates in sensitive filesystem areas without silently allowing destructive actions there\fP.
+
+.SS "Additional Protected Paths"
+.TP
+The \fB\-\-protect\fP option adds one or more directory trees to \fBNightkrawler's protected\fP roots for the current command. Protection applies recursively to files beneath those paths.
+
+.TP
+Paths supplied with \fB\-\-protect\fP are treated in the same action-safety model as \fBNightkrawler's\fP built-in \fBprotected\fP roots. They remain visible to scans and reports but may stop an action mode when a removable candidate is found beneath them.
+
+.SS "Safety Stop"
+.TP
+Before quarantine, Trash, or permanent deletion is performed, \fBNightkrawler\fP checks whether any removable candidate lies beneath a protected root.
+
+.TP
+If a \fBprotected\fP removable candidate is found and \fB\-\-allow\-protected\fP was not supplied, \fBNightkrawler refuses the action\fP. The safety stop identifies the \fBprotected candidate\fP, the matching \fBprotected root\fP, and the \fBscan path\fP, and no original files are changed by the refused action.
+
+.TP
+The protection check applies to removable candidates rather than merely to the existence of \fBprotected\fP files somewhere in the scan. A \fBprotected\fP keeper does not by itself cause an action refusal when no \fBprotected\fP removable candidate would be acted upon.
+
+.SS "Protected-Path Override"
+.TP
+The \fB\-\-allow\-protected\fP option explicitly permits action modes to operate on removable candidates beneath \fBprotected roots\fP.
+
+.TP
+This option does not disable \fBprotected\fP classification and does not convert \fBprotected paths\fP into ordinary paths. It overrides only the action restriction that would otherwise cause a safety stop.
+
+.TP
+When \fB\-\-allow\-protected\fP is used and \fBprotected removable candidates\fP are present, \fBNightkrawler\fP prints a warning before continuing. The option should therefore be used only when action on those \fBprotected candidates\fP is deliberate.
+
+.SH "ACTION MODES"
+.SS "Report Only"
+.TP
+Without \fB\-\-quarantine\fP, \fB\-\-trash\fP, or \fB\-\-delete\fP, \fBNightkrawler\fP operates in \fBreport-only mode\fP.
+
+.TP
+In \fBreport-only mode\fP, \fBNightkrawler\fP scans for duplicates, selects a keeper for each duplicate group, classifies the results, and reports removable candidates \fBwithout modifying the original files\fP.
+
+.TP
+\fBReport-only mode\fP is the \fBsafest way to inspect the results of a scan\fP before choosing an action mode.
+
+.SS "Quarantine"
+.TP
+The \fB\-\-quarantine\fP option copies removable duplicate files into a separate quarantine directory. \fBQuarantine by itself does not remove, move, or alter the original files\fP.
+
+.TP
+\fBNightkrawler\fP checks the available space on the filesystem containing the quarantine directory before copying begins. Successfully quarantined files are recorded in a manifest so that they can later be restored to their original locations.
+
+.TP
+Quarantine may be used by itself or combined with \fB\-\-trash\fP or \fB\-\-delete\fP. When combined with a destructive action, quarantine is completed first.
+
+.SS "Trash"
+.TP
+The \fB\-\-trash\fP option moves removable duplicate files to the system Trash implementation when available. If Trash is unavailable for a required filesystem, \fBNightkrawler\fP reports an error and refuses the operation before moving duplicate files.
+
+.TP
+One verified duplicate from each group remains as the keeper. Only the remaining removable candidates are passed to Trash.
+
+.TP
+The \fB\-\-trash\fP and \fB\-\-delete\fP options are mutually exclusive. Trash may, however, be combined with \fB\-\-quarantine\fP so that recoverable quarantine copies are created before the original removable candidates are moved to Trash.
+
+.SS "Delete"
+.TP
+The \fB\-\-delete\fP option \fBpermanently removes removable duplicate files\fP from their original locations.
+
+.TP
+\fBOne verified duplicate from each group remains as the keeper. Only the remaining removable candidates are deleted\fP.
+
+.TP
+\fBPermanent deletion should be used only after the duplicate groups and keeper selections have been reviewed carefully\fP. The \fB\-\-delete\fP option may be combined with \fB\-\-quarantine\fP so that recoverable copies are created before the originals are removed.
+
+.SS "Interactive Operation"
+.TP
+The \fB\-\-interactive\fP option may be used with \fB\-\-trash\fP or \fB\-\-delete\fP to request confirmation before each destructive action.
+
+.TP
+Each removable candidate is presented individually. Depending on the chosen action, the file is moved to Trash or permanently deleted only when the user explicitly confirms the operation. A declined candidate is skipped and remains unchanged.
+
+.TP
+Interactive operation does not apply to quarantine copying. When quarantine is combined with an interactive Trash or delete operation, quarantine copies are created first and the original removable candidates are then offered individually for the selected destructive action.
+
+.SH "QUARANTINE"
+.SS "Copying and Layout"
+.TP
+The \fB\-\-quarantine\fP option copies each removable duplicate into the selected quarantine directory while leaving the original file in place.
+
+.TP
+\fBNightkrawler\fP preserves the scanned path structure beneath the quarantine directory where possible. If the intended quarantine destination already exists, \fBNightkrawler\fP chooses a unique destination name rather than overwriting the existing file.
+
+.TP
+The configured quarantine directory is excluded from the active scan so that files copied into quarantine cannot themselves become duplicate candidates during that scan.
+
+.SS "Free-Space Check"
+.TP
+Before quarantine copying begins, \fBNightkrawler\fP calculates the total size of all removable candidates and checks the available space on the filesystem containing the quarantine directory.
+
+.TP
+If the available space is smaller than the amount required for the complete quarantine operation, \fBNightkrawler\fP refuses to begin copying. The required and available space are reported, and no quarantine files are created by that refused operation.
+
+.SS "Manifest"
+.TP
+After all intended quarantine copies complete successfully, \fBNightkrawler\fP writes a \fB.nightkrawler-manifest\fP file inside the quarantine directory.
+
+.TP
+The manifest records the original pathname, quarantine pathname, and file size for every successfully copied file. Unix pathnames are stored as their original bytes together with explicit lengths rather than as delimiter-separated text. This allows valid filenames containing spaces, tabs, newlines, or non-UTF-8 pathname bytes to be represented without those characters being mistaken for field separators.
+
+.TP
+The manifest is used by \fB\-\-restore\fP to determine the original destination of each quarantined file.
+
+.SS "Combined Actions"
+.TP
+Quarantine may be combined with \fB\-\-trash\fP or \fB\-\-delete\fP. In a combined operation, \fBNightkrawler\fP creates the quarantine copies before changing the original removable files.
+
+.TP
+The destructive stage is permitted only when every intended quarantine copy completed successfully. If any copy fails or is skipped, Nightkrawler performs a safety stop and refuses the subsequent Trash or delete stage. \fBThe original files are not changed by the refused destructive action\fP.
+
+.TP
+After a successful combined operation, the quarantine copies remain available independently of the originals and may later be restored with \fB\-\-restore\fP.
+
+.SH "RESTORE AND CLEANUP"
+.SS "Restore"
+.TP
+A \fBNightkrawler\fP quarantine can be restored with \fB\-\-restore\fP or \fB-u\fP followed by the quarantine directory.
+
+.TP
+\fBNightkrawler\fP reads the quarantine manifest and attempts to copy each recorded file back to its original location. If an original parent directory no longer exists, \fBNightkrawler\fP recreates the required directory path before restoring the file.
+
+.TP
+Existing files at original destinations are never overwritten. If an original path already exists, that manifest entry is skipped and the existing file remains unchanged.
+
+.TP
+If a recorded quarantine file is missing or cannot be copied back successfully, that entry is counted as failed and restoration continues with the remaining manifest records.
+
+.TP
+Restoration copies files back to their original locations; it does not remove the corresponding quarantine copies. The quarantine therefore remains available after restoration until it is removed separately with \fB\-\-cleanup\fP.
+
+.SS "Cleanup"
+.TP
+The \fB\-\-cleanup\fP option, or its short form \fB-c\fP, removes a \fBNightkrawler\fP quarantine directory after it is no longer needed.
+
+.TP
+Cleanup is deliberately guarded because it removes the entire selected directory tree. \fBNightkrawler\fP refuses to clean the filesystem root, the user's home directory, or the current working directory.
+
+.TP
+A missing quarantine is treated as having nothing to clean. An existing empty quarantine directory is removed and likewise reported as having nothing to clean.
+
+.TP
+Before removing a populated directory, \fBNightkrawler\fP verifies that it contains a \fB.nightkrawler-manifest\fP file with the recognized \fBNightkrawler quarantine signature\fP. If the manifest is missing, unreadable, or invalid, cleanup fails and the directory is not removed.
+
+.TP
+Once a populated target has passed the safety checks and quarantine-manifest validation, \fBNightkrawler\fP removes the quarantine directory and its contents recursively.
+
+.SH "REPORTS"
+.SS "Report Location"
+.TP
+When duplicate groups are found, \fBNightkrawler\fP writes a detailed text report after the scan and any selected action processing have completed.
+
+.TP
+Without \fB\-\-report\fP or \fB-r\fP, the report is created in the current working directory using an automatically generated filename.
+
+.TP
+If \fB\-\-report PATH\fP names an existing directory, \fBNightkrawler\fP creates an automatically named report inside that directory. Otherwise, \fBPATH\fP is used as the report filename.
+
+.TP
+When no duplicate groups are found, \fBNightkrawler\fP reports that there is nothing to report and does not create a report file.
+
+.SS "Report Contents"
+.TP
+Each report records information about the scan and the host on which it was performed. This includes the scan date, operating system and release, architecture, hostname, scan duration, scan root, minimum file size, recursive state, selected action mode, keeper policy, excluded paths, and additional protected paths.
+
+.TP
+For every duplicate group, the report records the group classification, file size, selected keeper path, and the paths of the remaining removable candidates.
+
+.TP
+The wording used for removable candidates reflects the selected action mode. Candidates may therefore appear under headings such as \fBRemovable\fP, \fBTo Quarantine\fP, \fBTo Trash\fP, or \fBTo Delete\fP.
+
+.SS "Classification and Summary"
+.TP
+Duplicate groups are organized into Protected, Generated, and Ordinary report sections when groups of those classifications are present.
+
+.TP
+The report concludes with a summary containing the number of duplicate groups, files kept, removable files, and total reclaimable space.
+
+.TP
+When quarantine is used, the report also records the number of successfully copied files and the quarantine directory.
+
+.SH "EXAMPLES"
+
+.TP
+Scan a directory for duplicate files \fB100 MB\fP or larger without modifying anything:
+
+.RS
+\fBnk ~/Downloads --min-size 100M\fP
+.RE
+
+.TP
+Scan recursively for duplicate files \fB100 MB\fP or larger:
+
+.RS
+\fBnk ~/Downloads -R --min-size 100M\fP
+.RE
+
+.TP
+Scan the home directory recursively while excluding selected directory trees:
+
+.RS
+\fBnk ~ -R --min-size 100M -E ~/bin ~/PycharmProjects ~/snap\fP
+.RE
+
+.TP
+Prefer keeping matching files beneath \fB~/DevX\fP before files beneath \fB~/Documents\fP:
+
+.RS
+\fBnk ~ -R --min-size 100M -p ~/DevX ~/Documents\fP
+.RE
+
+.TP
+Prefer files associated with the highest version-like pathname component:
+
+.RS
+\fBnk ~/projects -R --min-size 10M --keep-highest-version\fP
+.RE
+
+.TP
+Add \fB~/.sensitive\fP as an additional protected tree while scanning:
+
+.RS
+\fBnk ~ -R --min-size 100M -P ~/.sensitive\fP
+.RE
+
+.TP
+Copy removable duplicates into a quarantine directory while leaving the
+original files unchanged:
+
+.RS
+\fBnk ~/Downloads -R --min-size 100M -q ~/nk-quarantine\fP
+.RE
+
+.TP
+Move removable duplicates to the system Trash:
+
+.RS
+\fBnk ~/Downloads -R --min-size 100M -t\fP
+.RE
+
+.TP
+Offer each removable duplicate individually before moving it to Trash:
+
+.RS
+\fBnk ~/Downloads -R --min-size 100M -t -i\fP
+.RE
+
+.TP
+Create quarantine copies first, then move the original removable duplicates to Trash:
+
+.RS
+\fBnk ~/Downloads -R --min-size 100M -q ~/nk-quarantine -t\fP
+.RE
+
+.TP
+Permanently delete removable duplicates after creating quarantine copies:
+
+.RS
+\fBnk ~/Downloads -R --min-size 100M -q ~/nk-quarantine -d\fP
+.RE
+
+.TP
+Create quarantine copies first, then ask for confirmation before deleting each original removable duplicate:
+
+.RS
+\fBnk ~/Downloads -R --min-size 100M -q ~/nk-quarantine -d -i\fP
+.RE
+
+.TP
+Restore files from a \fBNightkrawler\fP quarantine:
+
+.RS
+\fBnk -u ~/nk-quarantine\fP
+.RE
+
+.TP
+Remove a \fBNightkrawler\fP quarantine after it is no longer needed:
+
+.RS
+\fBnk -c ~/nk-quarantine\fP
+.RE
+
+.TP
+Scan the filesystem recursively, quarantine removable duplicates, and permit action on protected candidates:
+
+.RS
+\fBnk / -R --min-size 100M -q /tmp/nk-quarantine --allow-protected\fP
+.RE
+
+.SH "FILES"
+
+.TP
+\fB.nightkrawler-manifest\fP
+
+.RS
+Stored inside each \fBNightkrawler quarantine directory\fP. The manifest records the original pathname, quarantine pathname, and file size for each quarantined file. It is required by \fB\-\-restore\fP and is used by \fB\-\-cleanup\fP to verify that a populated directory is a recognized \fBNightkrawler\fP quarantine.
+
+The manifest is internal \fBNightkrawler\fP data and should not be edited manually.
+.RE
+
+.TP
+\fBnightkrawler-duplicates-TIMESTAMP.txt\fP
+
+.RS
+Default filename used for automatically generated duplicate reports. When \fB\-\-report\fP is not supplied, the report is written to the current working directory. When \fB\-\-report\fP names an existing directory, the automatically generated report is written inside that directory.
+
+\fBTIMESTAMP\fP is generated from the current system time when the report filename is created.
+.RE
+
+.SH "EXIT STATUS"
+
+.TP
+\fB0\fP
+
+.RS
+The requested operation completed without an operational error. Informational commands such as \fB\-\-help\fP, \fB\-\-version\fP, \fB\-\-manual\fP, and \fB\-\-classification\-help\fP also return zero.
+.RE
+
+.TP
+\fB1\fP
+
+.RS
+An operational or safety error occurred. Examples include an unavailable Trash implementation, a protected-path safety stop, insufficient quarantine space, a failed file operation, an invalid quarantine, restoration or cleanup failure, or inability to write the report.
+.RE
+
+.TP
+\fB2\fP
+
+.RS
+The command line is invalid. This includes unknown options, missing or invalid option arguments, missing required scan arguments, mutually incompatible options, and other option-validation errors.
+.RE
+
+.SH "SEE ALSO"
+
+.TP
+scry(1), noct(1), find(1), du(1), rm(1)
+
+.TP
+\fBScry\fP is an interactive terminal file browser. \fBNoct\fP provides focused filesystem inspection and analysis operations. \fBScry\fP and \fBNoct\fP are sibling tools to \fBNightkrawler\fP.
+
+.SH AUTHORS
+.TP
+\fBNightkrawler\fP was created by Markus Johnsson (hedningakjetil@gmail.com)
+
+.SH "REPORTING BUGS AND HOMEPAGE"
+
+.TP
+Bug reports, feature requests, and source code are available through the Nightkrawler project repository on GitHub.
+
+.TP
+Project homepage
+
+.RS
+\fBhttps://github.com/ferusx/nightkrawler\fP
+.RE
+
+.TP
+When reporting a problem, include the \fBNightkrawler version\fP, operating system, command that was run, and the relevant output or error message where possible.
+
+
+

@@ -83,12 +83,7 @@ pub fn print_help(colors_enabled: bool) {
 
     print_blank_line(inner_width, &colors);
 
-    print_line(
-        "Usage:",
-        inner_width,
-        colors.title,
-        &colors,
-    );
+    print_line("Usage:", inner_width, colors.title, &colors);
 
     print_indented_paragraph(
         &[
@@ -152,33 +147,13 @@ pub fn print_help(colors_enabled: bool) {
 
     print_blank_line(inner_width, &colors);
 
-    print_line(
-        "Meta:",
-        inner_width,
-        colors.title,
-        &colors,
-    );
+    print_line("Meta:", inner_width, colors.title, &colors);
 
-    print_option_line(
-        "-h, --help",
-        "Show this help text",
-        inner_width,
-        &colors,
-    );
+    print_option_line("-h, --help", "Show this help text", inner_width, &colors);
 
-    print_option_line(
-        "-v, --version",
-        "Show version info",
-        inner_width,
-        &colors,
-    );
+    print_option_line("-v, --version", "Show version info", inner_width, &colors);
 
-    print_option_line(
-        "--manual",
-        "Show extensive manual",
-        inner_width,
-        &colors,
-    );
+    print_option_line("--manual", "Show extensive manual", inner_width, &colors);
 
     print_option_line(
         "--classification-help",
@@ -200,12 +175,7 @@ pub fn print_help(colors_enabled: bool) {
 
     print_blank_line(inner_width, &colors);
 
-    print_line(
-        "Options:",
-        inner_width,
-        colors.title,
-        &colors,
-    );
+    print_line("Options:", inner_width, colors.title, &colors);
 
     print_option_line(
         "--min-size SIZE",
@@ -256,12 +226,7 @@ pub fn print_help(colors_enabled: bool) {
         &colors,
     );
 
-    print_option_line(
-        "--recursive, -R",
-        "Scan recursively",
-        inner_width,
-        &colors,
-    );
+    print_option_line("--recursive, -R", "Scan recursively", inner_width, &colors);
 
     print_option_line(
         "--quarantine, -q PATH",
@@ -318,12 +283,7 @@ pub fn print_help(colors_enabled: bool) {
 
     print_blank_line(inner_width, &colors);
 
-    print_line(
-        "Safety:",
-        inner_width,
-        colors.title,
-        &colors,
-    );
+    print_line("Safety:", inner_width, colors.title, &colors);
 
     print_indented_paragraph(
         &[
@@ -484,24 +444,20 @@ pub fn print_help(colors_enabled: bool) {
     );
 
     print_indented_paragraph(
-        &[
-            ManualPart {
-                text: "If quarantine copying fails or is skipped, trash or delete is refused.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "If quarantine copying fails or is skipped, trash or delete is refused.",
+            color: colors.text,
+        }],
         inner_width,
         2,
         &colors,
     );
 
     print_indented_paragraph(
-        &[
-            ManualPart {
-                text: "Nightkrawler checks free space before copying.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Nightkrawler checks free space before copying.",
+            color: colors.text,
+        }],
         inner_width,
         2,
         &colors,
@@ -524,12 +480,10 @@ pub fn print_help(colors_enabled: bool) {
     );
 
     print_indented_paragraph(
-        &[
-            ManualPart {
-                text: "It does not follow symlinks.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "It does not follow symlinks.",
+            color: colors.text,
+        }],
         inner_width,
         2,
         &colors,
@@ -581,12 +535,7 @@ pub fn print_help(colors_enabled: bool) {
 
     print_blank_line(inner_width, &colors);
 
-    print_line(
-        "Examples:",
-        inner_width,
-        colors.title,
-        &colors,
-    );
+    print_line("Examples:", inner_width, colors.title, &colors);
 
     print_example(
         &[
@@ -837,71 +786,56 @@ pub fn print_help(colors_enabled: bool) {
     );
 
     print_example(
-        &[
-            ManualPart {
-                text: "Scan the directory recursively, quarantine removable duplicates, then move the original removable duplicates to Trash:",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Scan the directory recursively, quarantine removable duplicates, then move the original removable duplicates to Trash:",
+            color: colors.text,
+        }],
         "nk ~/Downloads --recursive --min-size 100M --quarantine ~/nk-quarantine -t",
         inner_width,
         &colors,
     );
 
     print_example(
-        &[
-            ManualPart {
-                text: "Scan the directory recursively and permanently delete removable duplicate files larger than 100MB:",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Scan the directory recursively and permanently delete removable duplicate files larger than 100MB:",
+            color: colors.text,
+        }],
         "nk ~/Downloads --recursive --min-size 100M --delete",
         inner_width,
         &colors,
     );
 
     print_example(
-        &[
-            ManualPart {
-                text: "Scan the directory recursively and offer each removable duplicate for deletion interactively:",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Scan the directory recursively and offer each removable duplicate for deletion interactively:",
+            color: colors.text,
+        }],
         "nk ~/Downloads --recursive --min-size 100M -d -i",
         inner_width,
         &colors,
     );
 
     print_example(
-        &[
-            ManualPart {
-                text: "Scan the directory recursively, quarantine removable duplicates, then permanently delete the originals:",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Scan the directory recursively, quarantine removable duplicates, then permanently delete the originals:",
+            color: colors.text,
+        }],
         "nk ~/Downloads --recursive --min-size 100M -q ~/nk-quarantine -d",
         inner_width,
         &colors,
     );
 
     print_example(
-        &[
-            ManualPart {
-                text: "Scan the directory recursively, quarantine removable duplicates, then offer each original removable duplicate for deletion:",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Scan the directory recursively, quarantine removable duplicates, then offer each original removable duplicate for deletion:",
+            color: colors.text,
+        }],
         "nk ~/Downloads --recursive --min-size 100M -q ~/nk-quarantine -d -i",
         inner_width,
         &colors,
     );
 
-    print_line(
-        "Note:",
-        inner_width,
-        colors.title,
-        &colors,
-    );
+    print_line("Note:", inner_width, colors.title, &colors);
 
     print_indented_paragraph(
         &[
@@ -942,41 +876,28 @@ pub fn print_manual(colors_enabled: bool) {
 
     print_top_border(inner_width, &colors);
 
-    print_line(
-        "Nightkrawler Manual",
-        inner_width,
-        colors.title,
-        &colors,
-    );
+    print_line("Nightkrawler Manual", inner_width, colors.title, &colors);
 
     print_separator(inner_width, &colors);
 
     print_blank_line(inner_width, &colors);
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Nightkrawler is a duplicate file finder and removal tool designed around cautious inspection, explicit action modes, and recoverable workflows.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Nightkrawler is a duplicate file finder and removal tool designed around cautious inspection, explicit action modes, and recoverable workflows.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
-    print_manual_section(
-        "Overview",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Overview", inner_width, &colors);
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Nightkrawler scans regular files, groups files with identical content, chooses one file from each duplicate group to keep, and identifies the remaining copies as removable duplicates.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Nightkrawler scans regular files, groups files with identical content, chooses one file from each duplicate group to keep, and identifies the remaining copies as removable duplicates.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -1009,46 +930,35 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "A duplicate group always keeps one matching file. Action modes operate only on the removable members of the group.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "A duplicate group always keeps one matching file. Action modes operate only on the removable members of the group.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Nightkrawler compares file contents rather than filenames. Files may have completely different names and still belong to the same duplicate group when their contents are identical.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Nightkrawler compares file contents rather than filenames. Files may have completely different names and still belong to the same duplicate group when their contents are identical.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Zero-byte files follow the same duplicate rule as every other regular file. If several zero-byte files form a duplicate group, one is kept and the others are treated as removable duplicates.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Zero-byte files follow the same duplicate rule as every other regular file. If several zero-byte files form a duplicate group, one is kept and the others are treated as removable duplicates.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_blank_line(inner_width, &colors);
 
-
-    print_manual_section(
-        "Usage",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Usage", inner_width, &colors);
 
     print_indented_paragraph(
         &[
@@ -1200,19 +1110,13 @@ pub fn print_manual(colors_enabled: bool) {
         &colors,
     );
 
-    print_manual_section(
-        "Scanning",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Scanning", inner_width, &colors);
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Nightkrawler scans regular files only. Symbolic links are not followed and are not added to duplicate groups.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Nightkrawler scans regular files only. Symbolic links are not followed and are not added to duplicate groups.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -1291,43 +1195,33 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "When a quarantine directory is configured, Nightkrawler also excludes that quarantine tree from the scan so copied quarantine files cannot immediately become duplicate candidates themselves.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "When a quarantine directory is configured, Nightkrawler also excludes that quarantine tree from the scan so copied quarantine files cannot immediately become duplicate candidates themselves.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Files are first grouped by size. Files with unique sizes require no further duplicate comparison. Matching-size candidates are hashed and then verified by direct byte comparison before they are accepted as identical.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Files are first grouped by size. Files with unique sizes require no further duplicate comparison. Matching-size candidates are hashed and then verified by direct byte comparison before they are accepted as identical.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "This final byte comparison prevents a hash match alone from being treated as proof that two files are identical.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "This final byte comparison prevents a hash match alone from being treated as proof that two files are identical.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
-    print_manual_section(
-        "Classification",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Classification", inner_width, &colors);
 
     print_manual_paragraph(
         &[
@@ -1358,12 +1252,10 @@ pub fn print_manual(colors_enabled: bool) {
 
     print_manual_subsection(
         "Ordinary",
-        &[
-            ManualPart {
-                text: "An ordinary path is a file that does not fall under a generated or protected path rule.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "An ordinary path is a file that does not fall under a generated or protected path rule.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -1393,12 +1285,10 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Generated classification does not automatically delete anything. It describes where the duplicate group was found and helps make reports easier to evaluate.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Generated classification does not automatically delete anything. It describes where the duplicate group was found and helps make reports easier to evaluate.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -1537,12 +1427,10 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "If any file in a duplicate group belongs to a more restrictive classification, the group is reported using that classification.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "If any file in a duplicate group belongs to a more restrictive classification, the group is reported using that classification.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -1562,42 +1450,32 @@ pub fn print_manual(colors_enabled: bool) {
         &colors,
     );
 
-    print_manual_section(
-        "Keeper Selection",
+    print_manual_section("Keeper Selection", inner_width, &colors);
+
+    print_manual_paragraph(
+        &[ManualPart {
+            text: "Every duplicate group contains one file selected as the keeper. The remaining matching files become removable candidates.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Every duplicate group contains one file selected as the keeper. The remaining matching files become removable candidates.",
-                color: colors.text,
-            },
-        ],
-        inner_width,
-        &colors,
-    );
-
-    print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Keeper selection never means that Nightkrawler considers the other files different. All members of the group have already been verified as identical by content.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Keeper selection never means that Nightkrawler considers the other files different. All members of the group have already been verified as identical by content.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_subsection(
         "Default policy",
-        &[
-            ManualPart {
-                text: "The default keeper policy uses deterministic path-based ordering. Files under locations commonly associated with temporary or replaceable content are less preferred than ordinary locations.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "The default keeper policy uses deterministic path-based ordering. Files under locations commonly associated with temporary or replaceable content are less preferred than ordinary locations.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -1626,12 +1504,10 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "When candidates remain tied, Nightkrawler uses path depth and pathname ordering to make the final choice reproducible.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "When candidates remain tied, Nightkrawler uses path depth and pathname ordering to make the final choice reproducible.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -1665,23 +1541,19 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Preferred paths are ordered. The first path has the highest priority, followed by the second, and so on.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Preferred paths are ordered. The first path has the highest priority, followed by the second, and so on.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_indented_paragraph(
-        &[
-            ManualPart {
-                text: "nk ~ -R --min-size 100M --prefer ~/DevX ~/Documents",
-                color: colors.example,
-            },
-        ],
+        &[ManualPart {
+            text: "nk ~ -R --min-size 100M --prefer ~/DevX ~/Documents",
+            color: colors.example,
+        }],
         inner_width,
         4,
         &colors,
@@ -1749,12 +1621,10 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "When version-like candidates are available, Nightkrawler prefers the file associated with the highest detected version. Other keeper rules are used to break ties or when no usable version is found.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "When version-like candidates are available, Nightkrawler prefers the file associated with the highest detected version. Other keeper rules are used to break ties or when no usable version is found.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -1778,21 +1648,13 @@ pub fn print_manual(colors_enabled: bool) {
         &colors,
     );
 
-
-
-    print_manual_section(
-        "Protection",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Protection", inner_width, &colors);
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Protection is separate from exclusion. An excluded path is not scanned. A protected path may still be scanned and reported, but action modes are prevented from operating on protected candidates unless explicit permission is given.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Protection is separate from exclusion. An excluded path is not scanned. A protected path may still be scanned and reported, but action modes are prevented from operating on protected candidates unless explicit permission is given.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -1825,12 +1687,10 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_indented_paragraph(
-        &[
-            ManualPart {
-                text: "nk ~ -R --min-size 100M --protect ~/.sensitive",
-                color: colors.example,
-            },
-        ],
+        &[ManualPart {
+            text: "nk ~ -R --min-size 100M --protect ~/.sensitive",
+            color: colors.example,
+        }],
         inner_width,
         4,
         &colors,
@@ -1885,12 +1745,10 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "The safety stop identifies the protected candidate, the matching protected root, and the scan path. Original files are not changed by the refused action.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "The safety stop identifies the protected candidate, the matching protected root, and the scan path. Original files are not changed by the refused action.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -1929,11 +1787,7 @@ pub fn print_manual(colors_enabled: bool) {
         &colors,
     );
 
-    print_manual_section(
-        "Action Modes",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Action Modes", inner_width, &colors);
 
     print_manual_paragraph(
         &[
@@ -1964,36 +1818,30 @@ pub fn print_manual(colors_enabled: bool) {
 
     print_manual_subsection(
         "--quarantine",
-        &[
-            ManualPart {
-                text: "Copies removable duplicates into a quarantine directory while leaving the original files in place.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Copies removable duplicates into a quarantine directory while leaving the original files in place.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_subsection(
         "--trash",
-        &[
-            ManualPart {
-                text: "Moves removable duplicates to the system Trash implementation.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Moves removable duplicates to the system Trash implementation.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_subsection(
         "--delete",
-        &[
-            ManualPart {
-                text: "Permanently removes removable duplicate files from their original locations.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Permanently removes removable duplicate files from their original locations.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -2083,11 +1931,7 @@ pub fn print_manual(colors_enabled: bool) {
         &colors,
     );
 
-    print_manual_section(
-        "Quarantine",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Quarantine", inner_width, &colors);
 
     print_manual_paragraph(
         &[
@@ -2117,12 +1961,10 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_indented_paragraph(
-        &[
-            ManualPart {
-                text: "nk ~/Downloads -R --min-size 100M -q ~/nk-quarantine",
-                color: colors.example,
-            },
-        ],
+        &[ManualPart {
+            text: "nk ~/Downloads -R --min-size 100M -q ~/nk-quarantine",
+            color: colors.example,
+        }],
         inner_width,
         4,
         &colors,
@@ -2131,56 +1973,46 @@ pub fn print_manual(colors_enabled: bool) {
     print_blank_line(inner_width, &colors);
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Nightkrawler preserves the scanned path structure below the quarantine directory where possible. If a destination name already exists, a unique Nightkrawler suffix is added rather than overwriting the existing quarantine file.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Nightkrawler preserves the scanned path structure below the quarantine directory where possible. If a destination name already exists, a unique Nightkrawler suffix is added rather than overwriting the existing quarantine file.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Before copying begins, Nightkrawler calculates the total size of the removable duplicates and checks the available free space on the filesystem containing the quarantine directory.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Before copying begins, Nightkrawler calculates the total size of the removable duplicates and checks the available free space on the filesystem containing the quarantine directory.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "If there is not enough free space, quarantine is refused before files are copied.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "If there is not enough free space, quarantine is refused before files are copied.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "A quarantine manifest records the original path, quarantine path, and size of each copied file. The current manifest format stores Unix pathnames as their original bytes rather than relying on tab- or newline-separated text fields.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "A quarantine manifest records the original path, quarantine path, and size of each copied file. The current manifest format stores Unix pathnames as their original bytes rather than relying on tab- or newline-separated text fields.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "This allows valid Unix filenames containing tabs, newlines, spaces, or non-UTF-8 pathname bytes to be represented without using those characters as field separators.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "This allows valid Unix filenames containing tabs, newlines, spaces, or non-UTF-8 pathname bytes to be represented without using those characters as field separators.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -2213,41 +2045,31 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "If quarantine copying fails or is incomplete, Nightkrawler performs a safety stop and refuses the Trash or delete stage. Original files are left unchanged by the refused destructive action.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "If quarantine copying fails or is incomplete, Nightkrawler performs a safety stop and refuses the Trash or delete stage. Original files are left unchanged by the refused destructive action.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
-    print_manual_section(
-        "Restore and Cleanup",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Restore and Cleanup", inner_width, &colors);
 
     print_manual_subsection(
         "--restore",
-        &[
-            ManualPart {
-                text: "Restores files recorded in a Nightkrawler quarantine manifest to their original paths.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Restores files recorded in a Nightkrawler quarantine manifest to their original paths.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_indented_paragraph(
-        &[
-            ManualPart {
-                text: "nk --restore ~/nk-quarantine",
-                color: colors.example,
-            },
-        ],
+        &[ManualPart {
+            text: "nk --restore ~/nk-quarantine",
+            color: colors.example,
+        }],
         inner_width,
         4,
         &colors,
@@ -2279,57 +2101,47 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "If the original path already exists, that record is skipped rather than overwritten.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "If the original path already exists, that record is skipped rather than overwritten.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "If the original parent directory no longer exists, Nightkrawler recreates the required directory path before restoring the file.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "If the original parent directory no longer exists, Nightkrawler recreates the required directory path before restoring the file.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Restore copies files back to their original locations. The quarantine remains available until it is cleaned separately.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Restore copies files back to their original locations. The quarantine remains available until it is cleaned separately.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_subsection(
         "--cleanup",
-        &[
-            ManualPart {
-                text: "Removes a recognized Nightkrawler quarantine directory after it is no longer needed.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Removes a recognized Nightkrawler quarantine directory after it is no longer needed.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_indented_paragraph(
-        &[
-            ManualPart {
-                text: "nk --cleanup ~/nk-quarantine",
-                color: colors.example,
-            },
-        ],
+        &[ManualPart {
+            text: "nk --cleanup ~/nk-quarantine",
+            color: colors.example,
+        }],
         inner_width,
         4,
         &colors,
@@ -2361,51 +2173,39 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Cleanup is deliberately guarded against dangerous targets. Nightkrawler refuses to clean the filesystem root, the user's home directory, or the current working directory.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Cleanup is deliberately guarded against dangerous targets. Nightkrawler refuses to clean the filesystem root, the user's home directory, or the current working directory.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "A missing or empty quarantine is treated as having nothing to clean rather than as a destructive cleanup operation.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "A missing or empty quarantine is treated as having nothing to clean rather than as a destructive cleanup operation.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Before removing a populated directory, cleanup verifies that the directory contains a recognized Nightkrawler quarantine manifest.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Before removing a populated directory, cleanup verifies that the directory contains a recognized Nightkrawler quarantine manifest.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
-    print_manual_section(
-        "Reports",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Reports", inner_width, &colors);
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "When duplicate groups are found, Nightkrawler writes a detailed text report after processing the scan.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "When duplicate groups are found, Nightkrawler writes a detailed text report after processing the scan.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -2457,12 +2257,10 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Reports include scan date, operating system, architecture, hostname, scan duration, scan root, minimum size, recursive state, action mode, keeper policy, excluded paths, protected paths, duplicate groups, keeper paths, removable candidates, and reclaimable space.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Reports include scan date, operating system, architecture, hostname, scan duration, scan root, minimum size, recursive state, action mode, keeper policy, excluded paths, protected paths, duplicate groups, keeper paths, removable candidates, and reclaimable space.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -2495,51 +2293,39 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "When quarantine was used, the report also records the number of copied files and the quarantine location.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "When quarantine was used, the report also records the number of copied files and the quarantine location.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
-    print_manual_section(
-        "Safety",
+    print_manual_section("Safety", inner_width, &colors);
+
+    print_manual_paragraph(
+        &[ManualPart {
+            text: "Nightkrawler is designed so that inspection and action remain separate. A normal scan reports duplicate candidates without changing files.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Nightkrawler is designed so that inspection and action remain separate. A normal scan reports duplicate candidates without changing files.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "One file from every verified duplicate group is selected as the keeper. Trash and delete operate only on the remaining removable members.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "One file from every verified duplicate group is selected as the keeper. Trash and delete operate only on the remaining removable members.",
-                color: colors.text,
-            },
-        ],
-        inner_width,
-        &colors,
-    );
-
-    print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Nightkrawler does not follow symbolic links.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Nightkrawler does not follow symbolic links.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -2583,12 +2369,10 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Quarantine checks available space before copying. When quarantine precedes Trash or delete, the destructive stage is refused unless the quarantine copy completed cleanly.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Quarantine checks available space before copying. When quarantine precedes Trash or delete, the destructive stage is refused unless the quarantine copy completed cleanly.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -2609,34 +2393,26 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Restoration never overwrites an existing original path. Existing destinations are counted as skipped.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Restoration never overwrites an existing original path. Existing destinations are counted as skipped.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Cleanup contains additional target guards because removing an entire directory tree carries different risks from ordinary duplicate processing.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Cleanup contains additional target guards because removing an entire directory tree carries different risks from ordinary duplicate processing.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     // content
 
-    print_manual_section(
-        "Examples",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Examples", inner_width, &colors);
 
     print_example(
         &[
@@ -2655,12 +2431,10 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_example(
-        &[
-            ManualPart {
-                text: "Scan recursively and exclude selected directory trees:",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Scan recursively and exclude selected directory trees:",
+            color: colors.text,
+        }],
         "nk ~ -R --min-size 100M -E ~/bin ~/PycharmProjects ~/snap",
         inner_width,
         &colors,
@@ -2691,48 +2465,40 @@ pub fn print_manual(colors_enabled: bool) {
     );
 
     print_example(
-        &[
-            ManualPart {
-                text: "Create recoverable quarantine copies without changing the originals:",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Create recoverable quarantine copies without changing the originals:",
+            color: colors.text,
+        }],
         "nk ~/Downloads -R --min-size 100M -q ~/nk-quarantine",
         inner_width,
         &colors,
     );
 
     print_example(
-        &[
-            ManualPart {
-                text: "Quarantine removable duplicates first, then offer each original for permanent deletion:",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Quarantine removable duplicates first, then offer each original for permanent deletion:",
+            color: colors.text,
+        }],
         "nk ~/Downloads -R --min-size 100M -q ~/nk-quarantine -d -i",
         inner_width,
         &colors,
     );
 
     print_example(
-        &[
-            ManualPart {
-                text: "Restore files from a Nightkrawler quarantine:",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Restore files from a Nightkrawler quarantine:",
+            color: colors.text,
+        }],
         "nk --restore ~/nk-quarantine",
         inner_width,
         &colors,
     );
 
     print_example(
-        &[
-            ManualPart {
-                text: "Remove a quarantine after it is no longer needed:",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Remove a quarantine after it is no longer needed:",
+            color: colors.text,
+        }],
         "nk --cleanup ~/nk-quarantine",
         inner_width,
         &colors,
@@ -2814,32 +2580,24 @@ pub fn print_classification_help(colors_enabled: bool) {
         &colors,
     );
 
-    print_manual_section(
-        "Classes",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Classes", inner_width, &colors);
 
     print_manual_subsection(
         "Ordinary",
-        &[
-            ManualPart {
-                text: "An ordinary path does not belong to a generated or protected tree. Most normal user files will fall into this class.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "An ordinary path does not belong to a generated or protected tree. Most normal user files will fall into this class.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
 
     print_manual_subsection(
         "Generated",
-        &[
-            ManualPart {
-                text: "A generated path contains a directory name commonly associated with generated, cached, or rebuildable content.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "A generated path contains a directory name commonly associated with generated, cached, or rebuildable content.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -2871,12 +2629,10 @@ pub fn print_classification_help(colors_enabled: bool) {
     print_blank_line(inner_width, &colors);
 
     print_indented_paragraph(
-        &[
-            ManualPart {
-                text: "Generated classification does not automatically remove or ignore a file. It is a classification used for reporting and evaluation.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Generated classification does not automatically remove or ignore a file. It is a classification used for reporting and evaluation.",
+            color: colors.text,
+        }],
         inner_width,
         4,
         &colors,
@@ -2886,12 +2642,10 @@ pub fn print_classification_help(colors_enabled: bool) {
 
     print_manual_subsection(
         "Protected",
-        &[
-            ManualPart {
-                text: "A protected path belongs to a filesystem tree where Nightkrawler action modes require explicit permission before operating on removable duplicate candidates.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "A protected path belongs to a filesystem tree where Nightkrawler action modes require explicit permission before operating on removable duplicate candidates.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -3004,19 +2758,13 @@ pub fn print_classification_help(colors_enabled: bool) {
 
     print_blank_line(inner_width, &colors);
 
-    print_manual_section(
-        "Group Classification",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Group Classification", inner_width, &colors);
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "Classification applies to complete duplicate groups as well as individual paths. If a group contains members from different classes, Nightkrawler reports the group using the most restrictive class present.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Classification applies to complete duplicate groups as well as individual paths. If a group contains members from different classes, Nightkrawler reports the group using the most restrictive class present.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -3051,11 +2799,7 @@ pub fn print_classification_help(colors_enabled: bool) {
 
     print_blank_line(inner_width, &colors);
 
-    print_manual_section(
-        "Custom Protection",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Custom Protection", inner_width, &colors);
 
     print_manual_paragraph(
         &[
@@ -3085,12 +2829,10 @@ pub fn print_classification_help(colors_enabled: bool) {
     );
 
     print_indented_paragraph(
-        &[
-            ManualPart {
-                text: "nk ~ -R --min-size 100M --protect ~/.sensitive ~/important",
-                color: colors.example,
-            },
-        ],
+        &[ManualPart {
+            text: "nk ~ -R --min-size 100M --protect ~/.sensitive ~/important",
+            color: colors.example,
+        }],
         inner_width,
         4,
         &colors,
@@ -3125,11 +2867,7 @@ pub fn print_classification_help(colors_enabled: bool) {
         &colors,
     );
 
-    print_manual_section(
-        "Protection and Actions",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Protection and Actions", inner_width, &colors);
 
     print_manual_paragraph(
         &[
@@ -3186,12 +2924,10 @@ pub fn print_classification_help(colors_enabled: bool) {
     );
 
     print_manual_paragraph(
-        &[
-            ManualPart {
-                text: "The safety stop reports the protected candidate, its protected root, and the scan path. The refused action does not change original files.",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "The safety stop reports the protected candidate, its protected root, and the scan path. The refused action does not change original files.",
+            color: colors.text,
+        }],
         inner_width,
         &colors,
     );
@@ -3211,11 +2947,7 @@ pub fn print_classification_help(colors_enabled: bool) {
         &colors,
     );
 
-    print_manual_section(
-        "Examples",
-        inner_width,
-        &colors,
-    );
+    print_manual_section("Examples", inner_width, &colors);
 
     print_example(
         &[
@@ -3258,12 +2990,10 @@ pub fn print_classification_help(colors_enabled: bool) {
     );
 
     print_example(
-        &[
-            ManualPart {
-                text: "Exclude a tree entirely instead of protecting it:",
-                color: colors.text,
-            },
-        ],
+        &[ManualPart {
+            text: "Exclude a tree entirely instead of protecting it:",
+            color: colors.text,
+        }],
         "nk ~ -R --min-size 100M --exclude ~/.cache",
         inner_width,
         &colors,
@@ -3307,11 +3037,7 @@ fn terminal_width_from_environment() -> Option<usize> {
 }
 
 fn terminal_width_from_ioctl() -> Option<usize> {
-    for file_descriptor in [
-        libc::STDOUT_FILENO,
-        libc::STDERR_FILENO,
-        libc::STDIN_FILENO,
-    ] {
+    for file_descriptor in [libc::STDOUT_FILENO, libc::STDERR_FILENO, libc::STDIN_FILENO] {
         let mut window_size = libc::winsize {
             ws_row: 0,
             ws_col: 0,
@@ -3319,13 +3045,7 @@ fn terminal_width_from_ioctl() -> Option<usize> {
             ws_ypixel: 0,
         };
 
-        let result = unsafe {
-            libc::ioctl(
-                file_descriptor,
-                libc::TIOCGWINSZ,
-                &mut window_size,
-            )
-        };
+        let result = unsafe { libc::ioctl(file_descriptor, libc::TIOCGWINSZ, &mut window_size) };
 
         if result == 0 {
             let width = window_size.ws_col as usize;
@@ -3395,12 +3115,7 @@ fn print_line(text: &str, width: usize, color: &str, colors: &ManualColors) {
     );
 }
 
-fn print_option_line(
-    option: &str,
-    description: &str,
-    width: usize,
-    colors: &ManualColors,
-) {
+fn print_option_line(option: &str, description: &str, width: usize, colors: &ManualColors) {
     const INDENT: usize = 2;
     const OPTION_WIDTH: usize = 28;
 
@@ -3410,32 +3125,17 @@ fn print_option_line(
 
     let option_width = option.chars().count();
 
-    print!(
-        "{}{}{}",
-        colors.option,
-        option,
-        colors.reset,
-    );
+    print!("{}{}{}", colors.option, option, colors.reset,);
 
     let gap = OPTION_WIDTH.saturating_sub(option_width);
 
     print!("{}", " ".repeat(gap));
 
-    print!(
-        "{}{}{}",
-        colors.text,
-        description,
-        colors.reset,
-    );
+    print!("{}{}{}", colors.text, description, colors.reset,);
 
-    let used_width =
-        OPTION_WIDTH + description.chars().count();
+    let used_width = OPTION_WIDTH + description.chars().count();
 
-    print_right_padding(
-        content_width,
-        used_width,
-        colors,
-    );
+    print_right_padding(content_width, used_width, colors);
 }
 
 fn print_indented_paragraph(
@@ -3483,19 +3183,13 @@ fn print_indented_paragraph(
     print_right_padding(content_width, current_width, colors);
 }
 
-
 fn print_example(
     description: &[ManualPart<'_>],
     command: &str,
     inner_width: usize,
     colors: &ManualColors,
 ) {
-    print_indented_paragraph(
-        description,
-        inner_width,
-        2,
-        colors,
-    );
+    print_indented_paragraph(description, inner_width, 2, colors);
 
     print_indented_paragraph(
         &[ManualPart {
@@ -3510,36 +3204,18 @@ fn print_example(
     print_blank_line(inner_width, colors);
 }
 
-fn print_manual_section(
-    title: &str,
-    inner_width: usize,
-    colors: &ManualColors,
-) {
+fn print_manual_section(title: &str, inner_width: usize, colors: &ManualColors) {
     print_separator(inner_width, colors);
 
     print_blank_line(inner_width, colors);
 
-    print_line(
-        title,
-        inner_width,
-        colors.title,
-        colors,
-    );
+    print_line(title, inner_width, colors.title, colors);
 
     print_blank_line(inner_width, colors);
 }
 
-fn print_manual_paragraph(
-    parts: &[ManualPart<'_>],
-    inner_width: usize,
-    colors: &ManualColors,
-) {
-    print_indented_paragraph(
-        parts,
-        inner_width,
-        2,
-        colors,
-    );
+fn print_manual_paragraph(parts: &[ManualPart<'_>], inner_width: usize, colors: &ManualColors) {
+    print_indented_paragraph(parts, inner_width, 2, colors);
 
     print_blank_line(inner_width, colors);
 }
@@ -3560,12 +3236,7 @@ fn print_manual_subsection(
         colors,
     );
 
-    print_indented_paragraph(
-        parts,
-        inner_width,
-        4,
-        colors,
-    );
+    print_indented_paragraph(parts, inner_width, 4, colors);
 
     print_blank_line(inner_width, colors);
 }

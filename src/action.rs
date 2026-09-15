@@ -3,10 +3,14 @@
 use crate::human_size;
 use crate::model::{CandidateFile, DeleteSummary, DuplicateGroup, TrashSummary};
 use crate::output::{
-    COLOR_ERROR, COLOR_HEADING, COLOR_MUTED, COLOR_PATH, COLOR_VALUE, COLOR_WARNING,
-    colored, print_section,
+    COLOR_ERROR, COLOR_HEADING, COLOR_MUTED, COLOR_PATH, COLOR_VALUE, COLOR_WARNING, colored,
+    print_section,
 };
+use std::collections::HashSet;
+use std::fs::OpenOptions;
 use std::io::Write;
+use std::os::unix::fs::MetadataExt;
+use std::path::{Path, PathBuf};
 use std::{fs, io};
 
 pub fn delete_duplicates(
@@ -87,6 +91,94 @@ pub fn delete_duplicates(
     }
 }
 
+pub fn verify_trash_available(duplicate_groups: &[DuplicateGroup]) -> Result<(), String> {
+    let mut checked_filesystems = HashSet::new();
+
+    for group in duplicate_groups {
+        for file in &group.remove {
+            let metadata = fs::metadata(&file.path).map_err(|error| {
+                format!(
+                    "unable to inspect {} before Trash preflight: {}",
+                    file.path.display(),
+                    error
+                )
+            })?;
+
+            let device = metadata.dev();
+
+            if !checked_filesystems.insert(device) {
+                continue;
+            }
+
+            let Some(parent) = file.path.parent() else {
+                return Err(format!(
+                    "unable to determine parent directory for {}",
+                    file.path.display()
+                ));
+            };
+
+            verify_trash_for_directory(parent)?;
+        }
+    }
+
+    Ok(())
+}
+
+fn verify_trash_for_directory(directory: &Path) -> Result<(), String> {
+    let probe_path = create_trash_probe(directory)?;
+
+    match trash::delete(&probe_path) {
+        Ok(()) => Ok(()),
+
+        Err(error) => {
+            let _ = fs::remove_file(&probe_path);
+
+            Err(format!(
+                "Trash is unavailable for filesystem containing {}: {}",
+                directory.display(),
+                error
+            ))
+        }
+    }
+}
+
+fn create_trash_probe(directory: &Path) -> Result<PathBuf, String> {
+    for counter in 0..1000usize {
+        let probe_path = directory.join(format!(
+            ".nightkrawler-trash-probe-{}-{}",
+            std::process::id(),
+            counter
+        ));
+
+        match OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&probe_path)
+        {
+            Ok(_) => {
+                return Ok(probe_path);
+            }
+
+            Err(error) if error.kind() == io::ErrorKind::AlreadyExists => {
+                continue;
+            }
+
+            Err(error) => {
+                return Err(format!(
+                    "unable to create Trash preflight file in {}: {}",
+                    directory.display(),
+                    error
+                ));
+            }
+        }
+    }
+
+    Err(format!(
+        "unable to create unique Trash preflight file in {}",
+        directory.display()
+    ))
+}
+
 pub fn trash_duplicates(
     duplicate_groups: &[DuplicateGroup],
     interactive: bool,
@@ -106,7 +198,7 @@ pub fn trash_duplicates(
     let mut skipped = 0usize;
     let mut trashed_space = 0u64;
 
-    for group in duplicate_groups {
+    'groups: for group in duplicate_groups {
         for file in &group.remove {
             if interactive && !confirm_trash_file(file) {
                 println!("{}", colored("Skipped:", COLOR_HEADING, use_colors,),);
@@ -153,6 +245,19 @@ pub fn trash_duplicates(
                     );
 
                     failed += 1;
+
+                    eprintln!();
+
+                    eprintln!(
+                        "{}",
+                        colored(
+                            "Trash operation stopped after the first failure.",
+                            COLOR_ERROR,
+                            use_colors,
+                        ),
+                    );
+
+                    break 'groups;
                 }
             }
         }

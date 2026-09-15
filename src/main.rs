@@ -17,15 +17,14 @@ mod scan;
 mod validation;
 
 use crate::output::{COLOR_BRIGHT_YELLOW, COLOR_HEADING, COLOR_VALUE, COLOR_WORDINGS};
-use action::{delete_duplicates, trash_duplicates};
+use action::{delete_duplicates, trash_duplicates, verify_trash_available};
 use duplicates::find_duplicate_groups;
 use fsutil::available_space_for_path;
 use model::{CandidateFile, Command, DuplicateGroup, QuarantineRecord, QuarantineSummary};
 use output::{
     COLOR_ERROR, COLOR_MUTED, COLOR_PATH, COLOR_SIZE, COLOR_SUCCESS, COLOR_WARNING, colored,
-    human_size, print_delete_summary, print_no_duplicates,
-    print_quarantine_safety_stop, print_report, print_report_path, print_scan_banner,
-    print_trash_summary,
+    human_size, print_delete_summary, print_no_duplicates, print_quarantine_safety_stop,
+    print_report, print_report_path, print_scan_banner, print_trash_summary,
 };
 use quarantine::quarantine_was_complete;
 use report::write_duplicate_report;
@@ -88,7 +87,36 @@ fn run_scan(options: model::Options) {
         refuse_protected_candidates_unless_allowed(&duplicate_groups, &options, action_name);
     }
 
+    if options.trash {
+        if let Err(error) = verify_trash_available(&duplicate_groups) {
+            eprintln!(
+                "{}",
+                colored(
+                    format!("nightkrawler: Trash preflight failed: {}", error),
+                    COLOR_ERROR,
+                    options.use_colors,
+                ),
+            );
+
+            eprintln!();
+
+            eprintln!(
+                "{}",
+                colored(
+                    "No duplicate files were moved to Trash.",
+                    COLOR_BRIGHT_YELLOW,
+                    options.use_colors,
+                ),
+            );
+
+            std::process::exit(1);
+        }
+    }
+
+
     let mut quarantine_summary: Option<QuarantineSummary> = None;
+
+    let mut action_failed = false;
 
     if let Some(quarantine_path) = options.quarantine_path.as_ref() {
         let quarantine_count: usize = duplicate_groups
@@ -128,8 +156,14 @@ fn run_scan(options: model::Options) {
             }
         }
 
+        if summary.failed > 0 {
+            action_failed = true;
+        }
+
         quarantine_summary = Some(summary);
     }
+
+
 
     if options.trash {
         if let Some(summary) = quarantine_summary.as_ref() {
@@ -168,6 +202,10 @@ fn run_scan(options: model::Options) {
             trash_duplicates(&duplicate_groups, options.interactive, options.use_colors);
 
         print_trash_summary(&trash_summary, options.use_colors);
+
+        if trash_summary.failed > 0 {
+            action_failed = true;
+        }
     }
 
     if options.delete {
@@ -205,6 +243,10 @@ fn run_scan(options: model::Options) {
             delete_duplicates(&duplicate_groups, options.interactive, options.use_colors);
 
         print_delete_summary(&delete_summary, options.use_colors);
+
+        if delete_summary.failed > 0 {
+            action_failed = true;
+        }
     }
 
     let report_path = match write_duplicate_report(
@@ -224,6 +266,10 @@ fn run_scan(options: model::Options) {
     };
 
     print_report_path(&report_path, options.use_colors);
+
+    if action_failed {
+        std::process::exit(1);
+    }
 }
 
 fn run_restore(quarantine_path: &Path) {
@@ -258,6 +304,10 @@ fn run_restore(quarantine_path: &Path) {
     };
 
     output::print_restore_summary(&summary, true);
+
+    if summary.failed > 0 {
+        std::process::exit(1);
+    }
 }
 
 fn run_cleanup(quarantine_path: &Path) {
@@ -601,4 +651,3 @@ fn quarantine_duplicates(
         records,
     }
 }
-

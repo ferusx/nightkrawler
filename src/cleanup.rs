@@ -18,14 +18,6 @@ pub fn cleanup_quarantine(quarantine_path: &Path) -> std::io::Result<CleanupOutc
         return Ok(CleanupOutcome::NothingToClean);
     }
 
-    let mut entries = fs::read_dir(quarantine_path)?;
-
-    if entries.next().is_none() {
-        fs::remove_dir(quarantine_path)?;
-
-        return Ok(CleanupOutcome::NothingToClean);
-    }
-
     let canonical = fs::canonicalize(quarantine_path)?;
 
     if canonical == Path::new("/") {
@@ -55,6 +47,14 @@ pub fn cleanup_quarantine(quarantine_path: &Path) -> std::io::Result<CleanupOutc
                 ));
             }
         }
+    }
+
+    let mut entries = fs::read_dir(&canonical)?;
+
+    if entries.next().is_none() {
+        fs::remove_dir(&canonical)?;
+
+        return Ok(CleanupOutcome::NothingToClean);
     }
 
     let manifest_path = canonical.join(MANIFEST_NAME);

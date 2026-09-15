@@ -2,14 +2,10 @@
 
 use crate::model::{Command, KeepPolicy, Options};
 use std::env;
-use std::path::PathBuf;
 use std::io::IsTerminal;
+use std::path::PathBuf;
 
-use crate::manual::{
-    print_classification_help,
-    print_help,
-    print_manual,
-};
+use crate::manual::{print_classification_help, print_help, print_manual};
 pub fn parse_arguments(arguments: &[String]) -> Command {
     if arguments.is_empty() {
         print_usage_and_exit();
@@ -59,9 +55,7 @@ fn parse_scan_arguments(arguments: &[String]) -> Options {
 
     let mut interactive = false;
 
-    let mut use_colors =
-        std::io::stdout().is_terminal()
-            && std::env::var_os("NO_COLOR").is_none();
+    let mut use_colors = std::io::stdout().is_terminal() && std::env::var_os("NO_COLOR").is_none();
 
     let mut index = 0;
 
@@ -73,10 +67,7 @@ fn parse_scan_arguments(arguments: &[String]) -> Options {
             }
 
             "-v" | "--version" => {
-                println!(
-                    "nightkrawler {}",
-                    env!("CARGO_PKG_VERSION"),
-                );
+                println!("nightkrawler {}", env!("CARGO_PKG_VERSION"),);
 
                 std::process::exit(0);
             }
@@ -323,9 +314,7 @@ fn parse_cleanup_command(arguments: &[String]) -> Command {
 }
 
 fn print_usage_and_exit() {
-    let use_colors =
-        std::io::stdout().is_terminal()
-            && std::env::var_os("NO_COLOR").is_none();
+    let use_colors = std::io::stdout().is_terminal() && std::env::var_os("NO_COLOR").is_none();
 
     print_help(use_colors);
 

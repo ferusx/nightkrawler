@@ -10,9 +10,7 @@ use std::path::{Path, PathBuf};
 const MANIFEST_NAME: &str = ".nightkrawler-manifest";
 const QUARANTINE_MAGIC: &[u8; 4] = b"NKQ1";
 
-pub fn restore_quarantine(
-    quarantine_path: &Path,
-) -> std::io::Result<RestoreSummary> {
+pub fn restore_quarantine(quarantine_path: &Path) -> std::io::Result<RestoreSummary> {
     let records = read_quarantine_manifest(quarantine_path)?;
 
     let mut summary = RestoreSummary::default();
@@ -35,15 +33,11 @@ pub fn restore_quarantine(
             }
         }
 
-        match fs::copy(
-            &record.quarantine_path,
-            &record.original_path,
-        ) {
+        match fs::copy(&record.quarantine_path, &record.original_path) {
             Ok(_) => {
                 summary.restored += 1;
 
-                summary.restored_space =
-                    summary.restored_space.saturating_add(record.size);
+                summary.restored_space = summary.restored_space.saturating_add(record.size);
             }
 
             Err(_) => {
