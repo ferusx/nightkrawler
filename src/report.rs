@@ -71,9 +71,11 @@ fn format_system_time(time: SystemTime) -> String {
     let seconds = time
         .duration_since(UNIX_EPOCH)
         .unwrap_or_default()
-        .as_secs() as libc::time_t;
+        .as_secs();
 
-    let mut local_tm = MaybeUninit::<libc::tm>::uninit();
+    let seconds = seconds.try_into().unwrap_or_default();
+
+    let mut local_tm = MaybeUninit::<libc::tm>::zeroed();
 
     let result = unsafe { libc::localtime_r(&seconds, local_tm.as_mut_ptr()) };
 

@@ -1,6 +1,6 @@
 [package]
 name = "nightkrawler"
-version = "0.4.1"
+version = "0.4.2"
 edition = "2024"
 license = "BSD-3-Clause"
 description = "Filesystem duplicate finder and removal tool for UNIX-like systems"
