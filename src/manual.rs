@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 use std::env;
+use std::ffi::CStr;
+use std::io::IsTerminal;
+
 const MIN_INNER_WIDTH: usize = 40;
 const MAX_INNER_WIDTH: usize = 96;
 
@@ -3060,41 +3063,77 @@ fn terminal_width_from_ioctl() -> Option<usize> {
 }
 
 fn print_top_border(width: usize, colors: &ManualColors) {
-    println!(
-        "{}┌{}┐{}",
-        colors.border,
-        "─".repeat(width + 4),
-        colors.reset,
-    );
+    if use_ascii_frame() {
+        println!(
+            "{}+{}+{}",
+            colors.border,
+            "-".repeat(width + 4),
+            colors.reset,
+        );
+    } else {
+        println!(
+            "{}┌{}┐{}",
+            colors.border,
+            "─".repeat(width + 4),
+            colors.reset,
+        );
+    }
 }
 
 fn print_separator(width: usize, colors: &ManualColors) {
-    println!(
-        "{}├{}┤{}",
-        colors.border,
-        "─".repeat(width + 4),
-        colors.reset,
-    );
+    if use_ascii_frame() {
+        println!(
+            "{}+{}+{}",
+            colors.border,
+            "-".repeat(width + 4),
+            colors.reset,
+        );
+    } else {
+        println!(
+            "{}├{}┤{}",
+            colors.border,
+            "─".repeat(width + 4),
+            colors.reset,
+        );
+    }
 }
 
 fn print_bottom_border(width: usize, colors: &ManualColors) {
-    println!(
-        "{}└{}┘{}",
-        colors.border,
-        "─".repeat(width + 4),
-        colors.reset,
-    );
+    if use_ascii_frame() {
+        println!(
+            "{}+{}+{}",
+            colors.border,
+            "-".repeat(width + 4),
+            colors.reset,
+        );
+    } else {
+        println!(
+            "{}└{}┘{}",
+            colors.border,
+            "─".repeat(width + 4),
+            colors.reset,
+        );
+    }
 }
 
 fn print_blank_line(width: usize, colors: &ManualColors) {
-    println!(
-        "{}│{}  {}  {}│{}",
-        colors.border,
-        colors.reset,
-        " ".repeat(width),
-        colors.border,
-        colors.reset,
-    );
+    if use_ascii_frame() {
+        println!(
+            "{}+{}+{}",
+            colors.border,
+            "-".repeat(width + 4),
+            colors.reset,
+        );
+    } else {
+        println!(
+            "{}│{}  {}  {}│{}",
+            colors.border,
+            colors.reset,
+            " ".repeat(width),
+            colors.border,
+            colors.reset,
+        );
+    }
 }
 
 fn print_line(text: &str, width: usize, color: &str, colors: &ManualColors) {
@@ -3102,17 +3141,31 @@ fn print_line(text: &str, width: usize, color: &str, colors: &ManualColors) {
 
     let padding = width.saturating_sub(visible_width);
 
-    println!(
-        "{}│{}  {}{}{}{}  {}│{}",
-        colors.border,
-        colors.reset,
-        color,
-        text,
-        colors.reset,
-        " ".repeat(padding),
-        colors.border,
-        colors.reset,
-    );
+    if use_ascii_frame() {
+        println!(
+            "{}|{}  {}{}{}{}  {}|{}",
+            colors.border,
+            colors.reset,
+            color,
+            text,
+            colors.reset,
+            " ".repeat(padding),
+            colors.border,
+            colors.reset,
+        );
+    } else {
+        println!(
+            "{}│{}  {}{}{}{}  {}│{}",
+            colors.border,
+            colors.reset,
+            color,
+            text,
+            colors.reset,
+            " ".repeat(padding),
+            colors.border,
+            colors.reset,
+        );
+    }
 }
 
 fn print_option_line(option: &str, description: &str, width: usize, colors: &ManualColors) {
@@ -3242,16 +3295,58 @@ fn print_manual_subsection(
 }
 
 fn print_left_border_with_indent(indent: usize, colors: &ManualColors) {
-    print!("{}│{}  {}", colors.border, colors.reset, " ".repeat(indent),);
+    if use_ascii_frame() {
+        print!(
+            "{}|{}  {}",
+            colors.border,
+            colors.reset,
+            " ".repeat(indent),
+        );
+    } else {
+        print!(
+            "{}│{}  {}",
+            colors.border,
+            colors.reset,
+            " ".repeat(indent),
+        );
+    }
 }
 
 fn print_right_padding(width: usize, current_width: usize, colors: &ManualColors) {
     let padding = width.saturating_sub(current_width);
 
-    println!(
-        "{}{}│{}",
-        " ".repeat(padding + 2),
-        colors.border,
-        colors.reset,
-    );
+    if use_ascii_frame() {
+        println!(
+            "{}{}|{}",
+            " ".repeat(padding + 2),
+            colors.border,
+            colors.reset,
+        );
+    } else {
+        println!(
+            "{}{}│{}",
+            " ".repeat(padding + 2),
+            colors.border,
+            colors.reset,
+        );
+    }
+}
+
+fn use_ascii_frame() -> bool {
+    if env::consts::OS != "netbsd" || !std::io::stdout().is_terminal() {
+        return false;
+    }
+
+    let tty_name = unsafe { libc::ttyname(libc::STDOUT_FILENO) };
+
+    if tty_name.is_null() {
+        return false;
+    }
+
+    let tty_path = unsafe { CStr::from_ptr(tty_name) }
+        .to_string_lossy();
+
+    tty_path.starts_with("/dev/ttyE")
+        || tty_path == "/dev/console"
+        || tty_path == "/dev/constty"
 }
