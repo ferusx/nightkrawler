@@ -53,15 +53,22 @@ Nightkrawler does not follow symbolic links.
 
 ## Supported Platforms
 
-Nightkrawler is intended for UNIX-like systems.
+Prebuilt Nightkrawler packages are available for:
 
-The current code contains platform-specific protected-path handling for:
-
-- Linux and other UNIX-like systems
+- Alpine Linux
+- Arch Linux
+- Debian
+- DragonFly BSD
 - FreeBSD
 - NetBSD
+- OpenBSD
+- openSUSE
+- Void Linux
 
-The program uses UNIX APIs and filesystem semantics and is not intended as a native Windows application.
+Nightkrawler is designed for UNIX-like systems and may also build on
+other compatible systems from source.
+
+Platform-specific filesystem protection is provided where required.
 
 ## Requirements
 
@@ -88,33 +95,87 @@ A `Cargo.lock` file is included in the release source so builds can use the lock
 
 ## Installation
 
-### From a distribution package
+### Prebuilt packages
 
-When a package is available for your distribution, use the native package manager.
+Prebuilt Nightkrawler packages are available from the [GitHub Releases page](https://github.com/ferusx/nightkrawler/releases).
 
-For a locally built Arch Linux package:
+Packages are provided for Alpine Linux, Arch Linux, Debian-based systems, DragonFly BSD, FreeBSD, NetBSD, OpenBSD, RPM-based systems, and Void Linux.
 
-```sh
-sudo pacman -U nightkrawler-*.pkg.tar.zst
-```
+The `.deb` package is built and tested on Debian, and the `.rpm` package is built and tested on openSUSE. Compatibility with other distributions using these package formats may vary.
 
-For a locally built RPM package on openSUSE:
+Download the package for your system, then follow the corresponding installation instructions below.
 
-```sh
-sudo zypper install ./nightkrawler-*.rpm
-```
+#### Alpine Linux
 
-Packaged installations install the main executable and the short command:
-
-```text
-nightkrawler
-nk
-```
-
-They also install the manual page:
+Nightkrawler's Alpine packages are signed with the FerusX Alpine package-signing key. Download and install the public key, then install the package:
 
 ```sh
-man nightkrawler
+wget -O ferusx-6aaf881d.rsa.pub https://raw.githubusercontent.com/ferusx/package-signing-keys/master/alpine/ferusx-6aaf881d.rsa.pub
+cp ferusx-6aaf881d.rsa.pub /etc/apk/keys/
+apk add ./nightkrawler-*.apk
+```
+
+#### Arch Linux
+
+```sh
+pacman -U ./nightkrawler-*.pkg.tar.zst
+```
+
+#### Debian-based systems
+
+```sh
+apt install ./nightkrawler_*_amd64.deb
+```
+
+#### DragonFly BSD
+
+```sh
+pkg add ./nightkrawler-dragonflybsd-*.pkg
+```
+
+#### FreeBSD
+
+```sh
+pkg install ./nightkrawler-freebsd-*.pkg
+```
+
+#### NetBSD
+
+```sh
+pkg_add ./nightkrawler-netbsd-*.tgz
+```
+
+#### OpenBSD
+
+Fetch and install the Nightkrawler package signing key before installing the package:
+
+```sh
+ftp -o nightkrawler-pkg.pub https://raw.githubusercontent.com/ferusx/package-signing-keys/master/openbsd/nightkrawler-pkg.pub
+cp nightkrawler-pkg.pub /etc/signify/nightkrawler-pkg.pub
+pkg_add ./nightkrawler-*.tgz
+```
+
+#### RPM-based systems
+
+On openSUSE, import the Nightkrawler RPM signing key, then install the package:
+
+```sh
+rpm --import https://raw.githubusercontent.com/ferusx/package-signing-keys/master/rpm/ferusx-rpm-signing-public.asc
+zypper install ./nightkrawler-*.x86_64.rpm
+```
+
+#### Void Linux
+
+XBPS installs packages from repositories rather than directly from standalone package files. After downloading the Nightkrawler package, create a local repository index in the directory containing the package:
+
+```sh
+xbps-rindex -a "$PWD"/nightkrawler-*.x86_64.xbps
+```
+
+Install Nightkrawler from the local repository:
+
+```sh
+xbps-install --repository="$PWD" nightkrawler
 ```
 
 ### Build from source
