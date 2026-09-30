@@ -97,13 +97,23 @@ A `Cargo.lock` file is included in the release source so builds can use the lock
 
 ### Prebuilt packages
 
-Prebuilt Nightkrawler packages are available from the [GitHub Releases page](https://github.com/ferusx/nightkrawler/releases).
+Prebuilt **Nightkrawler** packages are available for:
 
-Packages are provided for Alpine Linux, Arch Linux, Debian-based systems, DragonFly BSD, FreeBSD, NetBSD, OpenBSD, RPM-based systems, and Void Linux.
+- Alpine Linux (x86_64)
+- Arch Linux (x86_64)
+- Debian (amd64)
+- DragonFly BSD
+- FreeBSD
+- NetBSD
+- OpenBSD
+- openSUSE (x86_64)
+- Void Linux (x86_64)
 
-The `.deb` package is built and tested on Debian, and the `.rpm` package is built and tested on openSUSE. Compatibility with other distributions using these package formats may vary.
+Packages are available from the [GitHub Releases page](https://github.com/ferusx/nightkrawler/releases).
 
-Download the package for your system, then follow the corresponding installation instructions below.
+**Note:** ***Some installation commands require root privileges. Run those commands as root or using the privilege-elevation method appropriate for your system.***
+
+Installation instructions for each supported package format are provided below. All Linux packages are signed, and the corresponding public signing keys and verification instructions are also provided below.
 
 #### Alpine Linux
 Nightkrawler's Alpine packages are signed with the FerusX Alpine package-signing key. Download and install the public key, then install the package:
