@@ -113,7 +113,10 @@ Packages are available from the [GitHub Releases page](https://github.com/ferusx
 
 **Note:** ***Some installation commands require root privileges. Run those commands as root or using the privilege-elevation method appropriate for your system.***
 
-Installation instructions for each supported package format are provided below. All Linux packages are signed, and the corresponding public signing keys and verification instructions are also provided below.
+Installation instructions for each supported package format are provided below. Replace `<version>` in the commands with the version of Nightkrawler you want to install.
+
+Signing-key instructions are included where required.
+
 
 #### Alpine Linux
 Nightkrawler's Alpine packages are signed with the FerusX Alpine package-signing key. Download and install the public key, then install the package:
