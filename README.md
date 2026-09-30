@@ -55,15 +55,15 @@ Nightkrawler does not follow symbolic links.
 
 Prebuilt Nightkrawler packages are available for:
 
-- Alpine Linux
-- Arch Linux
-- Debian
+- Alpine Linux (x86_64)
+- Arch Linux (x86_64)
+- Debian (amd64)
 - DragonFly BSD
 - FreeBSD
 - NetBSD
 - OpenBSD
-- openSUSE
-- Void Linux
+- openSUSE (x86_64)
+- Void Linux (x86_64)
 
 Nightkrawler is designed for UNIX-like systems and may also build on
 other compatible systems from source.
@@ -106,7 +106,6 @@ The `.deb` package is built and tested on Debian, and the `.rpm` package is buil
 Download the package for your system, then follow the corresponding installation instructions below.
 
 #### Alpine Linux
-
 Nightkrawler's Alpine packages are signed with the FerusX Alpine package-signing key. Download and install the public key, then install the package:
 
 ```sh
@@ -146,7 +145,6 @@ pkg_add ./nightkrawler-netbsd-*.tgz
 ```
 
 #### OpenBSD
-
 Fetch and install the Nightkrawler package signing key before installing the package:
 
 ```sh
@@ -155,7 +153,7 @@ cp nightkrawler-pkg.pub /etc/signify/nightkrawler-pkg.pub
 pkg_add ./nightkrawler-*.tgz
 ```
 
-#### RPM-based systems
+#### openSUSE
 
 On openSUSE, import the Nightkrawler RPM signing key, then install the package:
 
@@ -163,9 +161,9 @@ On openSUSE, import the Nightkrawler RPM signing key, then install the package:
 rpm --import https://raw.githubusercontent.com/ferusx/package-signing-keys/master/rpm/ferusx-rpm-signing-public.asc
 zypper install ./nightkrawler-*.x86_64.rpm
 ```
+`Note:` The RPM package may also work on other RPM-based Linux distributions, but these have not yet been tested.
 
 #### Void Linux
-
 XBPS installs packages from repositories rather than directly from standalone package files. After downloading the Nightkrawler package, create a local repository index in the directory containing the package:
 
 ```sh
@@ -204,9 +202,9 @@ target/release/nightkrawler
 If you deliberately want to install a locally built copy without creating a distribution package:
 
 ```sh
-sudo install -Dm0755 target/release/nightkrawler /usr/local/bin/nightkrawler
-sudo ln -s nightkrawler /usr/local/bin/nk
-sudo install -Dm0644 man/man1/nightkrawler.1 /usr/local/share/man/man1/nightkrawler.1
+install -Dm0755 target/release/nightkrawler /usr/local/bin/nightkrawler
+ln -s nightkrawler /usr/local/bin/nk
+install -Dm0644 man/man1/nightkrawler.1 /usr/local/share/man/man1/nightkrawler.1
 ```
 
 This manual method is mainly useful for local development or testing. Distribution packages are preferable for normal system installation because the package manager can track, upgrade, and remove installed files cleanly.
